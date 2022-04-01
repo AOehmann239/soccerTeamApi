@@ -29,7 +29,7 @@ const router = express.Router();
 
 // INDEX
 // GET /examples
-router.get('/soccerTeams', requireToken, (req, res, next) => {
+router.get('/soccerTeams', (req, res, next) => {
   SoccerTeam.find()
     .then((soccerTeams) => {
       // `examples` will be an array of Mongoose documents
@@ -45,12 +45,14 @@ router.get('/soccerTeams', requireToken, (req, res, next) => {
 
 // SHOW
 // GET /examples/5a7db6c74d55bc51bdf39793
-router.get('/soccerTeams/:id', requireToken, (req, res, next) => {
+router.get('/soccerTeams/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   SoccerTeam.findById(req.params.id)
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "example" JSON
-    .then((soccer) => res.status(200).json({ soccer: soccer.toObject() }))
+    .then((soccerTeam) =>
+      res.status(200).json({ soccerTeam: soccerTeam.toObject() })
+    )
     // if an error occurs, pass it to the handler
     .catch(next);
 });
@@ -85,7 +87,7 @@ router.patch(
 
     SoccerTeam.findById(req.params.id)
       .then(handle404)
-      .then((example) => {
+      .then((soccerTeam) => {
         // pass the `req` object and the Mongoose record to `requireOwnership`
         // it will throw an error if the current user isn't the owner
         requireOwnership(req, soccerTeam);
